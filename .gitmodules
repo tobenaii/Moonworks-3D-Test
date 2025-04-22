@@ -1,0 +1,6 @@
+[submodule "libs/Moonworks"]
+	path = libs/Moonworks
+	url = https://github.com/MoonsideGames/MoonWorks.git
+[submodule "libs/glTF-CSharp-Loader"]
+	path = libs/glTF-CSharp-Loader
+	url = https://github.com/KhronosGroup/glTF-CSharp-Loader.git
