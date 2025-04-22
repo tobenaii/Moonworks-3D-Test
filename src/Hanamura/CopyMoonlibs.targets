@@ -6,21 +6,21 @@
 	</Target>
 
 	<ItemGroup Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))">
-		<Content Include="..\..\native\win64\**\*.*">
+		<Content Include="..\..\vendor\win64\**\*.*">
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 			<Visible>false</Visible>
 		</Content>
 	</ItemGroup>
 	<ItemGroup Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))">
-		<Content Include="..\..\native\lib64\**\*.*">
+		<Content Include="..\..\vendor\lib64\**\*.*">
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 			<Visible>false</Visible>
 		</Content>
 	</ItemGroup>
 	<ItemGroup Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))">
-		<Content Include="..\..\native\macos\**\*.*" >
+		<Content Include="..\..\vendor\macos\**\*.*" >
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 			<Visible>false</Visible>
