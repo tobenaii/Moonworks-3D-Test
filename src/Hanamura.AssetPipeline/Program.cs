@@ -69,6 +69,10 @@ internal static class Program
             if (Directory.Exists(eArgs.FullPath)) return;
             if (!File.Exists(eArgs.FullPath)) return;
 
+            if (eArgs.Name == "content_manifest.json")
+            {
+                return;
+            }
             try
             {
                 Console.WriteLine($"Modified: {eArgs.Name}");
@@ -166,7 +170,7 @@ internal static class Program
 
     private static void LoadManifest()
     {
-        var path = Path.Combine(_outputDir.FullName, "asset_manifest.json");
+        var path = Path.Combine(_sourceDir.FullName, "asset_manifest.json");
         if (!File.Exists(path)) return;
         var json = File.ReadAllText(path);
         var manifest = JsonSerializer.Deserialize<AssetManifest>(json)!;
@@ -188,6 +192,7 @@ internal static class Program
         }
         var manifest = new AssetManifest(assetDirectories);
         var json = JsonSerializer.Serialize(manifest, JsonOptions);
+        File.WriteAllText(Path.Combine(_sourceDir.FullName, "asset_manifest.json"), json);
         File.WriteAllText(Path.Combine(_outputDir.FullName, "asset_manifest.json"), json);
         GenerateAssetClasses();
     }

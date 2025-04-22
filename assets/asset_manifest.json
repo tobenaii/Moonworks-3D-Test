@@ -1,0 +1,39 @@
+{
+  "Directories": [
+    {
+      "Directory": "textures",
+      "Entries": [
+        {
+          "Hash": 8193588263988186602,
+          "Name": "tile_green"
+        }
+      ]
+    },
+    {
+      "Directory": "shaders",
+      "Entries": [
+        {
+          "Hash": 6452833234144002560,
+          "Name": "lit.frag"
+        },
+        {
+          "Hash": 13074613546552034168,
+          "Name": "lit.vert"
+        }
+      ]
+    },
+    {
+      "Directory": "meshes",
+      "Entries": [
+        {
+          "Hash": 8611337705968991376,
+          "Name": "cube"
+        },
+        {
+          "Hash": 15612400675577927059,
+          "Name": "ground"
+        }
+      ]
+    }
+  ]
+}

@@ -5,17 +5,18 @@ public static class Assets
 {
 	public static class Textures
 	{
-		public const ulong plant = 10055747396973924733;
+		public const ulong tile_green = 8193588263988186602;
 	}
 
 	public static class Shaders
 	{
-		public const ulong plant_frag = 2434195910380222046;
-		public const ulong plant_vert = 1832971502777700445;
+		public const ulong lit_frag = 6452833234144002560;
+		public const ulong lit_vert = 13074613546552034168;
 	}
 
 	public static class Meshes
 	{
-		public const ulong test = 14515282431139127037;
+		public const ulong cube = 8611337705968991376;
+		public const ulong ground = 15612400675577927059;
 	}
 }

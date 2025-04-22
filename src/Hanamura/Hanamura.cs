@@ -44,7 +44,7 @@ public class Hanamura : Game
             VertexInputState = VertexInputState.CreateSingleBinding<Vertex>(),
         };
         _pipeline = AssetManager.RegisterMaterial(
-            pipelineCreateInfo, Assets.Shaders.plant_vert, Assets.Shaders.plant_frag);
+            pipelineCreateInfo, Assets.Shaders.lit_vert, Assets.Shaders.lit_frag);
         _sampler = Sampler.Create(GraphicsDevice, SamplerCreateInfo.PointClamp);
         _depthTexture = Texture.Create2D(
             GraphicsDevice,
@@ -88,8 +88,8 @@ public class Hanamura : Game
                 new DepthStencilTargetInfo(_depthTexture, 1f),
                 new ColorTargetInfo(swapchainTexture, LoadOp.Clear, true)
             );
-            var mesh = AssetManager.GetMesh(Assets.Meshes.test);
-            var texture = AssetManager.GetTexture(Assets.Textures.plant);
+            var mesh = AssetManager.GetMesh(Assets.Meshes.cube);
+            var texture = AssetManager.GetTexture(Assets.Textures.tile_green);
             
             renderPass.BindGraphicsPipeline(_pipeline.Ref.Pipeline);
             renderPass.BindVertexBuffers(mesh.Ref.VertexBuffer);
