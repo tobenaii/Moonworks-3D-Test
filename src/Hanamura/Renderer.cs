@@ -47,7 +47,7 @@ public class Renderer : Manipulator
             },
             MultisampleState = MultisampleState.None,
             PrimitiveType = PrimitiveType.TriangleList,
-            RasterizerState = RasterizerState.CCW_CullBack,
+            RasterizerState = RasterizerState.CW_CullBack,
             VertexInputState = VertexInputState.CreateSingleBinding<Vertex>(),
         };
         _pipeline = AssetManager.RegisterMaterial(
@@ -64,8 +64,8 @@ public class Renderer : Manipulator
 
     public void Draw(double alpha)
     {
-        var proj =
-            Matrix4x4.CreatePerspectiveFieldOfView(
+        var proj = 
+            CreatePerspectiveFieldOfView(
                 float.DegreesToRadians(75f),
                 (float)_window.Width / _window.Height,
                 0.01f,
@@ -99,5 +99,23 @@ public class Renderer : Manipulator
             cmdbuf.EndRenderPass(renderPass);
         }
         _graphicsDevice.Submit(cmdbuf);
+    }
+    
+    private static Matrix4x4 CreatePerspectiveFieldOfView(
+        float fovY,
+        float aspect,
+        float znear,
+        float zfar)
+    {
+        var yScale = 1.0f / MathF.Tan(fovY * 0.5f);
+        var xScale = yScale / aspect;
+        var zRange = zfar - znear;
+
+        return new Matrix4x4(
+            xScale, 0, 0, 0,
+            0, yScale, 0, 0,
+            0, 0, zfar / zRange, 1,
+            0, 0, -(znear * zfar) / zRange, 0
+        );
     }
 }

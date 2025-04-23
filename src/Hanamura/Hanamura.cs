@@ -27,22 +27,26 @@ public class Hanamura : Game
             new TransformMatrixUpdateSystem(_world)
         ];
         
+        CreateMesh(Assets.Meshes.ground);
+        CreateMesh(Assets.Meshes.cube);
         CreateCamera();
-        CreateGround();
     }
 
     private void CreateCamera()
     {
         var entity = _world.CreateEntity();
-        _world.Set(entity, new CameraData(90, Vector3.Zero, 10));
+        _world.Set(entity, new CameraData(60, 0, Vector3.Zero, 5));
         _world.Set(entity, new CameraMatrix());
     }
 
-    private void CreateGround()
+    private void CreateMesh(ulong mesh, Vector3 position = new())
     {
         var entity = _world.CreateEntity();
-        _world.Set(entity, new RenderMesh(Assets.Meshes.ground));
-        _world.Set(entity, new Transform());
+        _world.Set(entity, new RenderMesh(mesh));
+        _world.Set(entity, new Transform()
+        {
+            Position = position
+        });
         _world.Set(entity, new TransformMatrix());
     }
 
