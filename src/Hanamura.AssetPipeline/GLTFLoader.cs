@@ -10,7 +10,7 @@ public static class GLTFLoader
 {
     [UsedImplicitly]
     public record MeshData(
-        [UsedImplicitly] string Name,
+        string Name,
         Vector3 Position,
         Quaternion Rotation,
         Vector3 Scale,

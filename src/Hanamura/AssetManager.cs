@@ -4,6 +4,7 @@ using Hanamura.Types;
 using JetBrains.Annotations;
 using MoonWorks.Graphics;
 using MoonWorks.Storage;
+using SDL3;
 
 namespace Hanamura;
 
@@ -23,8 +24,8 @@ public static class AssetManager
         uint[] Indices,
         int[] Children);
     
-    private static TitleStorage? _storage;
-    private static GraphicsDevice? _graphicsDevice;
+    private static TitleStorage _storage = null!;
+    private static GraphicsDevice _graphicsDevice = null!;
     private static FileSystemWatcher _watcher = null!;
     
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -117,7 +118,7 @@ public static class AssetManager
         var frag = ShaderMap[fragmentShader];
         createInfo.VertexShader = vert;
         createInfo.FragmentShader = frag;
-        var material = new Material()
+        var material = new Material
         {
             Pipeline = GraphicsPipeline.Create(_graphicsDevice, createInfo)
         };
@@ -133,10 +134,27 @@ public static class AssetManager
     private static void LoadTexture(string name, ulong hash)
     {
         var resourceUploader = new ResourceUploader(_graphicsDevice);
-        var texture = resourceUploader.CreateTexture2DFromCompressed(ReadFile($"assets/textures/{name}.png"),
-            TextureFormat.R8G8B8A8Unorm, TextureUsageFlags.Sampler);
+        var compressedImageData = ReadFile($"assets/textures/{name}.png");
+        ImageUtils.ImageInfoFromBytes(compressedImageData, out var width, out var height, out var _);
+        var mipLevels = (uint)Math.Floor(Math.Log2(Math.Max(width, height))) + 1;
+        var texture = Texture.Create2D(_graphicsDevice, name, width, height, TextureFormat.R8G8B8A8Unorm, TextureUsageFlags.Sampler, mipLevels);
+        resourceUploader.SetTextureDataFromCompressed(
+            new TextureRegion
+            {
+                Texture = texture.Handle,
+                W = width,
+                H = height,
+                D = 1,
+            },
+            compressedImageData
+        );
         resourceUploader.Upload();
         resourceUploader.Dispose();
+
+        var cmdBuf = _graphicsDevice.AcquireCommandBuffer();
+        SDL.SDL_GenerateMipmapsForGPUTexture(cmdBuf.Handle, texture.Handle);
+        _graphicsDevice.Submit(cmdBuf);
+        
         if (TextureMap.TryGetValue(hash, out var existingRef))
         {
             existingRef.Update(texture);
@@ -207,7 +225,7 @@ public static class AssetManager
 
     private static Span<byte> ReadFile(string path)
     {
-        _storage!.GetFileSize(path, out var size);
+        _storage.GetFileSize(path, out var size);
         var bytes = new byte[size];
         _storage.ReadFile(path, bytes);
         return bytes;

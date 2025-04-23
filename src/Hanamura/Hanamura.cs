@@ -45,7 +45,7 @@ public class Hanamura : Game
         };
         _pipeline = AssetManager.RegisterMaterial(
             pipelineCreateInfo, Assets.Shaders.lit_vert, Assets.Shaders.lit_frag);
-        _sampler = Sampler.Create(GraphicsDevice, SamplerCreateInfo.PointClamp);
+        _sampler = Sampler.Create(GraphicsDevice, SamplerCreateInfo.LinearWrap);
         _depthTexture = Texture.Create2D(
             GraphicsDevice,
             MainWindow.Width,
@@ -54,30 +54,36 @@ public class Hanamura : Game
             TextureUsageFlags.DepthStencilTarget | TextureUsageFlags.Sampler
         );
     }
+
     protected override void Update(TimeSpan delta)
     {
         AssetManager.CheckForReloadedAssets();
     }
 
-    private float _rotation;
     protected override void Draw(double alpha)
     {
-        var proj = Matrix4x4.CreatePerspectiveFieldOfView(
-            float.DegreesToRadians(75f),
-            (float) MainWindow.Width / MainWindow.Height,
-            0.01f,
-            100f
-        );
-        
+        var proj =
+            Matrix4x4.CreatePerspectiveFieldOfView(
+                float.DegreesToRadians(75f),
+                (float)MainWindow.Width / MainWindow.Height,
+                0.01f,
+                100f
+            );
+
+        var rotMatrix =
+            Matrix4x4.CreateFromYawPitchRoll(
+                0,
+                float.DegreesToRadians(90),
+                0
+            );
+        var camPos = new Vector3(0, 5, 0);
         var view = Matrix4x4.CreateLookAt(
-            new Vector3(0, 2, -5),
-            new Vector3(0, 2, 0),
-            Vector3.UnitY
+            camPos,
+            camPos + Vector3.Transform(Vector3.UnitZ, rotMatrix),
+            Vector3.Transform(Vector3.UnitY, rotMatrix)
         );
-        
-        var model = Matrix4x4.CreateRotationY(_rotation);
-        _rotation += 0.001f;
-        
+
+        var model = Matrix4x4.Identity;
         var mvpUniform = new TransformVertexUniform(model * view * proj, model);
         
         var cmdbuf = GraphicsDevice.AcquireCommandBuffer();
@@ -88,7 +94,7 @@ public class Hanamura : Game
                 new DepthStencilTargetInfo(_depthTexture, 1f),
                 new ColorTargetInfo(swapchainTexture, LoadOp.Clear, true)
             );
-            var mesh = AssetManager.GetMesh(Assets.Meshes.cube);
+            var mesh = AssetManager.GetMesh(Assets.Meshes.ground);
             var texture = AssetManager.GetTexture(Assets.Textures.tile_green);
             
             renderPass.BindGraphicsPipeline(_pipeline.Ref.Pipeline);
