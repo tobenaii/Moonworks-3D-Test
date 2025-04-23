@@ -6,7 +6,7 @@ using MoonWorks.Graphics;
 using MoonWorks.Storage;
 using SDL3;
 
-namespace Hanamura;
+namespace Hanamura.AssetManagement;
 
 public static class AssetManager
 {
@@ -208,11 +208,7 @@ public static class AssetManager
         var indexBuffer = resourceUploader.CreateBuffer<uint>(meshData[0].Indices, BufferUsageFlags.Index);
         resourceUploader.Upload();
         resourceUploader.Dispose();
-        var meshRef = new MeshRef(new Types.Mesh()
-        {
-            VertexBuffer = vertexBuffer,
-            IndexBuffer = indexBuffer
-        });
+        var meshRef = new MeshRef(new AssetManagement.Mesh(vertexBuffer, indexBuffer));
         if (MeshMap.TryGetValue(hash, out var existingRef))
         {
             existingRef.Update(meshRef);

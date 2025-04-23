@@ -7,6 +7,7 @@
   <Folder Name="/libs/">
     <Project Path="libs/glTF-CSharp-Loader/glTFLoader/glTFLoader.csproj" />
     <Project Path="libs/Moonworks/Moonworks.csproj" />
+    <Project Path="libs/MoonTools.ECS/MoonTools.ECS.csproj" />
   </Folder>
   <Project Path="src/Hanamura/Hanamura.csproj" />
   <Project Path="src\Hanamura.AssetPipeline\Hanamura.AssetPipeline.csproj" Type="Classic C#">

@@ -1,6 +1,6 @@
 ﻿using MoonWorks.Graphics;
 
-namespace Hanamura.Types;
+namespace Hanamura.AssetManagement;
 
 public class Material : IDisposable
 {

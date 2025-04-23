@@ -4,3 +4,6 @@
 [submodule "libs/glTF-CSharp-Loader"]
 	path = libs/glTF-CSharp-Loader
 	url = https://github.com/KhronosGroup/glTF-CSharp-Loader.git
+[submodule "libs/MoonTools.ECS"]
+	path = libs/MoonTools.ECS
+	url = https://github.com/MoonsideGames/MoonTools.ECS.git
