@@ -3,30 +3,21 @@ using MoonTools.ECS;
 
 namespace Hanamura.Systems;
 
-public class CameraMatrixUpdateSystem : MoonTools.ECS.System
+public class CameraMatrixUpdateSystem(World world) : MoonTools.ECS.System(world)
 {
-    private readonly Filter _cameraFilter;
-
-    public CameraMatrixUpdateSystem(World world) : base(world)
-    {
-        _cameraFilter = FilterBuilder.Include<CameraMatrix>().Include<CameraData>().Build();
-    }
-
     public override void Update(TimeSpan delta)
     {
-        ref var cameraData = ref GetSingleton<CameraData>();
+        var camera = GetSingletonEntity<MainCamera>();
+        var transform = Get<Transform>(camera);
+        
+        var forward = Vector3.Transform(Vector3.UnitZ, transform.Rotation);
+        var up = Vector3.Transform(Vector3.UnitY, transform.Rotation);
+        var position = Get<Transform>(camera).Position;
+        
         ref var cameraMatrix = ref GetSingleton<CameraMatrix>();
-
-        var yaw = float.DegreesToRadians(cameraData.Yaw);
-        var pitch = float.DegreesToRadians(cameraData.Pitch);
-        var rotMatrix = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, 0);
-        var forward = Vector3.Transform(Vector3.UnitZ, rotMatrix);
-        var up = Vector3.Transform(Vector3.UnitY, rotMatrix);
-        var camPos = cameraData.TargetPosition - forward * cameraData.TargetDistance;
-
         cameraMatrix.View = CreateLookAt(
-            camPos,
-            cameraData.TargetPosition,
+            position,
+            position + forward,
             up
         );
     }

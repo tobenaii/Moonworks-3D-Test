@@ -23,20 +23,46 @@ public class Hanamura : Game
         _renderer = new Renderer(_world, MainWindow, GraphicsDevice);
         _systems =
         [
+            //Inputs
+            new InputActionSystem(_world, Inputs),
+            
+            //Logic
+            new PlayerMovementSystem(_world),
+            new TargetFollowSystem(_world),
+            
+            //Transforms
             new CameraMatrixUpdateSystem(_world),
             new TransformMatrixUpdateSystem(_world)
         ];
         
         CreateMesh(Assets.Meshes.ground);
         CreateMesh(Assets.Meshes.cube);
-        CreateCamera();
+        
+        var player = CreatePlayer();
+        CreateCamera(player);
     }
 
-    private void CreateCamera()
+    private Entity CreatePlayer()
     {
         var entity = _world.CreateEntity();
-        _world.Set(entity, new CameraData(60, 0, Vector3.Zero, 5));
+        _world.Set(entity, new Player());
+        _world.Set(entity, new Transform());
+        _world.Set(entity, new MoveAction());
+        return entity;
+    }
+    
+    private void CreateCamera(Entity followTarget)
+    {
+        var entity = _world.CreateEntity();
+        _world.Set(entity, new MainCamera());
         _world.Set(entity, new CameraMatrix());
+        _world.Set(entity, new Transform()
+        {
+            Position = new Vector3(0, 5, -5),
+            Rotation = Quaternion.CreateFromYawPitchRoll(0, 45, 0)
+        });
+        _world.Set(entity, new FollowTarget(new Vector3(0, 5, -5)));
+        _world.Relate(entity, followTarget, new Follows());
     }
 
     private void CreateMesh(ulong mesh, Vector3 position = new())
