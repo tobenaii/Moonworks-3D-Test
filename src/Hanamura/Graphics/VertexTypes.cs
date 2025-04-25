@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using MoonWorks.Graphics;
 
-namespace Hanamura.Types;
+namespace Hanamura.Graphics;
 
 [StructLayout(LayoutKind.Sequential)]
 public struct Vertex(Vector3 position, Vector3 normal, Vector2 texCoord) : IVertexType

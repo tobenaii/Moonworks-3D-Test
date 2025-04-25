@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 using System.Text.Json;
-using Hanamura.Types;
+using Hanamura.Graphics;
 using JetBrains.Annotations;
 using MoonWorks.Graphics;
 using MoonWorks.Storage;

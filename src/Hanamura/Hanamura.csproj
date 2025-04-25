@@ -15,6 +15,17 @@
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\assets\**\*.*">
+      <Link>assets\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="CopyMoonlibs.targets" />
+  </ItemGroup>
   
   <Import Project=".\CopyMoonlibs.targets"/>
 

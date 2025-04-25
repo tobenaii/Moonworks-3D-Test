@@ -22,7 +22,7 @@ public class CameraMatrixUpdateSystem(World world) : MoonTools.ECS.System(world)
         );
     }
     
-    private static Matrix4x4 CreateLookAt(Vector3 eye, Vector3 target, Vector3 up)
+    public static Matrix4x4 CreateLookAt(Vector3 eye, Vector3 target, Vector3 up)
     {
         var zAxis = Vector3.Normalize(target - eye);
         var xAxis = Vector3.Normalize(Vector3.Cross(up, zAxis));

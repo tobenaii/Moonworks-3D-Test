@@ -4,6 +4,8 @@ using Hanamura.Systems;
 using MoonTools.ECS;
 using MoonWorks;
 using MoonWorks.Graphics;
+using Random = System.Random;
+using Renderer = Hanamura.Graphics.Renderer;
 
 namespace Hanamura;
 
@@ -34,9 +36,15 @@ public class Hanamura : Game
             new CameraMatrixUpdateSystem(_world),
             new TransformMatrixUpdateSystem(_world)
         ];
-        
+
+        var random = new Random();
+        for (var i = 0; i < 10000; i++)
+        {
+            //random ground position
+            var pos = new Vector3(random.Next(-100, 100), 0, random.Next(-100, 100));
+            CreateMesh(Assets.Meshes.test_plant, pos);
+        }
         CreateMesh(Assets.Meshes.ground);
-        CreateMesh(Assets.Meshes.cube);
         
         var player = CreatePlayer();
         CreateCamera(player);
