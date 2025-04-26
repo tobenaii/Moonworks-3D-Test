@@ -11,7 +11,7 @@ struct PSInput
     float4 LightSpacePos : TEXCOORD1;
 };
 
-float ShadowCalculation(float4 fragPosLightSpace)
+float ShadowCalculation(float4 fragPosLightSpace, float3 normal, float3 lightDir)
 {
     float3 ndc = fragPosLightSpace.xyz / fragPosLightSpace.w;
     float2 uv = ndc.xy * 0.5f + 0.5f;
@@ -19,20 +19,20 @@ float ShadowCalculation(float4 fragPosLightSpace)
     if (uv.x<0 || uv.x>1 || uv.y<0 || uv.y>1) 
         return 1.0f;
 
-    float depthRef = ndc.z - 0.005f;
-    // assumes you know your shadow map resolution:
+    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+    float depthRef = ndc.z - bias;
     float2 texelSize = 1.0f / float2(4096, 4096);
 
-    const int K = 2; // radius in texels
+    const int K = 2;
     float sum = 0;
     int count = 0;
-    for (int y = -K; y <= K; ++y)
-        for (int x = -K; x <= K; ++x)
+    for (int y = -K; y <= K; y++)
+        for (int x = -K; x <= K; x++)
         {
             float2 offset = float2(x, y) * texelSize;
             sum += ShadowTexture.SampleCmpLevelZero(
                        ShadowSampler, uv + offset, depthRef);
-            ++count;
+            count++;
         }
     return sum / count;
 }
@@ -42,10 +42,9 @@ float4 main(PSInput input) : SV_Target
 {
     float1 ambient = 0.15;
     float4 texColor = Texture.Sample(Sampler, input.TexCoord);
-    float3 lightDir = normalize(float3(1, -1, -1));
+    float3 lightDir = -normalize(float3(1, 1, -1));
     float diffuseIntensity = max(0, dot(normalize(input.Normal), -lightDir));
-    float shadow = ShadowCalculation(input.LightSpacePos);
+    float shadow = ShadowCalculation(input.LightSpacePos, input.Normal, lightDir);
     float3 lighting = (ambient + shadow * diffuseIntensity) * texColor.rgb;
     return float4(lighting, 1);
-    //return float4((diffuseIntensity + 0.2) * texColor);
 }

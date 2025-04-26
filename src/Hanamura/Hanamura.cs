@@ -30,24 +30,31 @@ public class Hanamura : Game
             
             //Logic
             new PlayerMovementSystem(_world),
-            new TargetFollowSystem(_world),
+            new TargetTrackingSystem(_world),
+            new MeshCullingSystem(_world),
             
-            //Transforms
-            new CameraMatrixUpdateSystem(_world),
+            //Transform
             new TransformMatrixUpdateSystem(_world)
         ];
 
+        const int sqrCount = 50;
         var random = new Random();
-        for (var i = 0; i < 10000; i++)
+        for (var x = -sqrCount; x < sqrCount; x++)
         {
-            //random ground position
-            var pos = new Vector3(random.Next(-100, 100), 0, random.Next(-100, 100));
-            CreateMesh(Assets.Meshes.test_plant, pos);
+            for (var y = -sqrCount; y < sqrCount; y++)
+            {
+                var pos = new Vector3(x, 0, y);
+                var rotation = Quaternion.CreateFromAxisAngle(Vector3.UnitY, random.NextSingle() * 360);
+                CreateMesh(Assets.Meshes.test_plant, pos, rotation);
+            }
         }
-        CreateMesh(Assets.Meshes.ground);
+        
+        CreateMesh(Assets.Meshes.ground, shouldCull: false);
         
         var player = CreatePlayer();
-        CreateCamera(player);
+        
+        var mainCamera = CreateCamera(player, float.DegreesToRadians(60), float.DegreesToRadians(0));
+        _world.Set(mainCamera, new MainCamera());
     }
 
     private Entity CreatePlayer()
@@ -55,31 +62,33 @@ public class Hanamura : Game
         var entity = _world.CreateEntity();
         _world.Set(entity, new Player());
         _world.Set(entity, new Transform());
+        _world.Set(entity, new TransformMatrix());
         _world.Set(entity, new MoveAction());
+        _world.Set(entity, new RenderMesh(Assets.Meshes.cube));
         return entity;
     }
     
-    private void CreateCamera(Entity followTarget)
+    private Entity CreateCamera(Entity followTarget, float pitch, float yaw)
     {
         var entity = _world.CreateEntity();
-        _world.Set(entity, new MainCamera());
-        _world.Set(entity, new CameraMatrix());
-        _world.Set(entity, new Transform()
-        {
-            Position = new Vector3(0, 5, -5),
-            Rotation = Quaternion.CreateFromYawPitchRoll(0, 45, 0)
-        });
-        _world.Set(entity, new FollowTarget(new Vector3(0, 5, -5)));
-        _world.Relate(entity, followTarget, new Follows());
+        _world.Set(entity, new Transform());
+        _world.Set(entity, new TrackTarget(Distance: 5, pitch, yaw));
+        _world.Relate(entity, followTarget, new Tracks());
+        return entity;
     }
-
-    private void CreateMesh(ulong mesh, Vector3 position = new())
+    
+    private void CreateMesh(ulong mesh, Vector3 position = new(), Quaternion rotation = new(), bool shouldCull = true)
     {
         var entity = _world.CreateEntity();
+        if (shouldCull)
+        {
+            _world.Set(entity, new ShouldCull());
+        }
         _world.Set(entity, new RenderMesh(mesh));
         _world.Set(entity, new Transform()
         {
-            Position = position
+            Position = position,
+            Rotation = rotation
         });
         _world.Set(entity, new TransformMatrix());
     }

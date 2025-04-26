@@ -1,16 +1,16 @@
 ﻿cbuffer UniformBlock : register(b0, space1)
 {
-    float4x4 Transform : packoffset(c0);
+    row_major float4x4 Transform : packoffset(c0);
 };
 
 cbuffer UniformBlock : register(b1, space1)
 {
-    float4x4 ModelTransform : packoffset(c0);
+    row_major float4x4 ModelTransform : packoffset(c0);
 };
 
 cbuffer UniformBlock : register(b2, space1)
 {
-    float4x4 LightTransform : packoffset(c0);
+    row_major float4x4 LightTransform : packoffset(c0);
 };
 
 
